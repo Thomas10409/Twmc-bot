@@ -5,6 +5,23 @@ twmc discord bot
 
 任何人都可以下載
 
+#需安裝
+
+discord.py
+
+urllib
+
+threading
+
+ffmpeg
+
+pytube
+
+pydub
+
+os
+
+time
 
 #功能 commands
 
