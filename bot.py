@@ -3,12 +3,10 @@ import discord
 import json
 import urllib.request, csv, os, time
 import threading
-from jsonsearch import JsonSearch
 from pytube import YouTube
 import ffmpeg
 from pytube import YouTube
 import os
-from moviepy.editor import *
 from pydub import AudioSegment
 
 print(os.getcwd())
@@ -19,11 +17,6 @@ def dl_audio(ctx, url):
     time.sleep(1)
     ctx.send("播放完畢")
     os.remove(url[32:43]+".mp3")
-
-def cov():
-    video = VideoFileClip(yt.title + '.mp4')
-    audio = video.audio
-    audio.write_audiofile(yt.title + '.mp3')
 
 def d_audio(url):
     target_path = "./Downloads"
