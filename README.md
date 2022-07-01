@@ -2,10 +2,9 @@
 twmc discord bot
 
 這是一個開源的discord bot
+
 任何人都可以下載
-請遵守創用cc
-BY-NC-ND
-姓名標示─非商業性─禁止改作
+
 
 #功能 commands
 
@@ -41,3 +40,8 @@ BY-NC-ND
 
              pong!獲得機器人延遲
              
+請遵守創用cc
+
+BY-NC-ND
+
+姓名標示─非商業性─禁止改作
