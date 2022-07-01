@@ -17,19 +17,35 @@ BY-NC-ND
 
 #功能 commands
 
-\play +     play music in a voice channel(only for youtube) 
+\play        
+
              在一個語音頻道播放音樂(只能放youtube)
-\join        join your voice channel
+             
+\join        
+
              加入你所在的語音頻道
-\leave       leave your voice channel
+             
+\leave       
+
              離開你所在的語音頻道
-\help        command list
+             
+\help        
+
              指令列表
-\covid       Get the number of confirmed cases yesterday (only for taiwan)
+             
+\covid       
+
              獲取昨日covid確診數(僅限台灣地區)
-\ㄐㄐ        this is a secret
+             
+\ㄐㄐ        
+
              用用看你就會知道了
-\rickroll    Rickroll
+             
+\rickroll    
+
              恭喜你被rickroll了嘿嘿
-\ping        pong!Get bot ping
+             
+\ping        
+
              pong!獲得機器人延遲
+             
