@@ -183,17 +183,20 @@ async def rickroll(ctx):
 
 @bot.command()
 async def help(ctx):
-    embed=discord.Embed(title="指令列表", color=0x1bff00)
-    embed.add_field(name="所有指令", value="這裡都是可以使用的指令歡迎大家使用", inline=False)
-    embed.add_field(name="---------------------------------------------------------------------------------", value="᲼", inline=False)
-    embed.add_field(name="\help", value="查看這個你現在正在看的東西", inline=True)
-    embed.add_field(name="\ping", value="pong!延遲阿不然勒", inline=True)
-    embed.add_field(name="\covid", value="獲得昨天covid確診數", inline=True)
-    embed.add_field(name="\\rickroll", value="恭喜你被rickroll了嘿嘿", inline=True)
-
-    embed.add_field(name="\\\ㄐㄐ", value="用用看你就會知道了", inline=True)
-    embed.add_field(name="---------------------------------------------------------------------------------", value="᲼", inline=False)
-    embed.set_footer(text="Make by Thomas10409")
+    embed=discord.Embed(title="指令列表", description="這裡的指令都可以用", color=0x1bff00)
+    embed.add_field(name="普通指令", value="᲼", inline=False)
+    embed.add_field(name="\help", value="你現在正在看的東東", inline=True)
+    embed.add_field(name="\covid", value="獲取當天covid確診人數僅限台灣地區", inline=True)
+    embed.add_field(name="\\ㄐㄐ", value="吃ㄐㄐ", inline=True)
+    embed.add_field(name="\rickroll", value="rickroll頻道裡的人", inline=True)
+    embed.add_field(name="\ping", value="獲取機器人延遲", inline=True)
+    embed.add_field(name="音樂指令(Beta)", value="᲼", inline=False)
+    embed.add_field(name="\join", value="讓機器人加入你得語音頻道", inline=True)
+    embed.add_field(name="\play", value="播放youtube音樂", inline=True)
+    embed.add_field(name="\leave", value="讓機器離開你得語音頻道", inline=True)
+    embed.add_field(name="有問題可以私訊我", value="᲼", inline=False)
+    embed.add_field(name="或加入我ㄉㄜDC群", value="https://discord.gg/fDhF8n3vnK", inline=False)
+    embed.set_footer(text="作者:Thomas10409#3431")
     await ctx.send(embed=embed)
 
 @bot.command()
@@ -213,6 +216,7 @@ async def join(ctx):
             await ctx.message.add_reaction('✅')
         else:
             await ctx.send("我已經加到一個頻道了")
+            await ctx.message.add_reaction('❕')
     else:
         await ctx.send("你要老子加到哪裡啊!")
         await ctx.message.add_reaction('❌')
@@ -239,6 +243,7 @@ async def play(ctx,arg):
     if not str(voice_client) == "None":
         if not voice_client.is_playing():
             try:
+                await ctx.send("請稍等音樂正在下載...\n下載時間和影片長度成正比")
                 yt.streams.filter().get_audio_only().download(filename=url[32:43]+".mp3")
             except:
                 await ctx.send("<Download Error>好像發生了點事情\n音樂下載失敗了...")
@@ -262,7 +267,7 @@ async def play(ctx,arg):
 @bot.command()
 async def stop(ctx):
     voice_client = ctx.message.guild.voice_client
-    if not voice_client.is_playing() :
+    if voice_client.is_playing() :
         await voice_client.stop()
         await ctx.message.add_reaction('✅')
     else:
