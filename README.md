@@ -23,11 +23,19 @@ os
 
 time
 
-#功能 commands
+#音樂功能 music commands
 
 \play        
 
              在一個語音頻道播放音樂(只能放youtube)
+             
+\resume
+
+             繼續播放
+             
+\pause
+
+             暫停播放
              
 \join        
 
@@ -36,6 +44,8 @@ time
 \leave       
 
              離開你所在的語音頻道
+             
+#其他功能 another commands
              
 \help        
 
