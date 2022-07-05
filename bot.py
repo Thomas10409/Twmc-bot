@@ -8,10 +8,12 @@ import ffmpeg
 import os
 from pydub import AudioSegment
 import re
+import shutil
+
 
 cwd = str(os.getcwd())
 print(os.getcwd())
-old_music = ""
+old_url = ""
 
 if not os.path.isdir(cwd + "/music"):
     try:
@@ -19,7 +21,7 @@ if not os.path.isdir(cwd + "/music"):
         os.mkdir(cwd + "/music")
     except:
         print("這都能出錯?!!!")
-
+    
 def covid_event():
     global out
     url = "	https://od.cdc.gov.tw/eic/covid19/covid19_tw_stats.csv"
@@ -147,6 +149,7 @@ async def on_ready():
 
     await bot.change_presence(status= status_w, activity=activity_w)
 
+    
 @bot.command()
 async def covid(ctx):
     w = threading.Thread(target = covid_event())
@@ -173,7 +176,7 @@ async def help(ctx):
     embed=discord.Embed(title="指令列表", description="這裡的指令都可以用", color=0x1bff00)
     embed.add_field(name="普通指令", value="᲼", inline=False)
     embed.add_field(name="\\help", value="你現在正在看的東東", inline=True)
-    embed.add_field(name="\\covid", value="獲取當天covid確診人數僅限台灣地區", inline=True)
+    embed.add_field(name="\\covid", value="獲取當天covid確診人數\n\(僅限台灣地區\)", inline=True)
     embed.add_field(name="\\ ㄐㄐ", value="吃ㄐㄐ", inline=True)
     embed.add_field(name="\\rickroll", value="rickroll頻道裡的人", inline=True)
     embed.add_field(name="\\ping", value="獲取機器人延遲", inline=True)
@@ -184,6 +187,7 @@ async def help(ctx):
     embed.add_field(name="\\pause", value="暫停音樂", inline=True)
     embed.add_field(name="\\stop", value="停止播放", inline=True)
     embed.add_field(name="\\leave", value="讓機器離開你得語音頻道", inline=True)
+    embed.add_field(name="\\clear", value="刪除多餘音檔", inline=True)
     embed.add_field(name="有問題可以私訊我", value="᲼", inline=False)
     embed.add_field(name="或加入我ㄉㄜDC群", value="https://discord.gg/fDhF8n3vnK", inline=False)
     embed.set_footer(text="作者:Thomas10409#3431")
@@ -267,6 +271,10 @@ async def play(ctx,arg):
     #下載音樂
     if not str(voice_client) == "None":
         if not voice_client.is_playing():
+            global old_url
+            if not old_url == "":
+                if os.path.isfile(cwd + "/music/" + old_url[32:43] +".mp3"):
+                    os.remove(cwd + "/music/" + old_url[32:43] +".mp3")
             if not os.path.isfile(cwd + "/music/" + url[32:43] +".mp3"):
                 try:
                     print("url")
@@ -289,6 +297,7 @@ async def play(ctx,arg):
                     try:
                         await ctx.send("現在播放:" + yt.title)
                         voice_client.play(discord.FFmpegPCMAudio(url[32:43] + ".mp3"))
+                        old_url = url
                     except:
                         await ctx.send("<PlayError>播放時出了點問題")
             else:
@@ -303,6 +312,7 @@ async def play(ctx,arg):
                 try:
                     await ctx.send("現在播放:" + yt.title)
                     voice_client.play(discord.FFmpegPCMAudio(url[32:43] + ".mp3"))
+                    old_url = url
                 except:
                     await ctx.send("<PlayError>播放時出了點問題")
         else:
@@ -348,6 +358,23 @@ async def resume(ctx):
             await ctx.message.add_reaction('❌')
     else:
         await ctx.send("你要先把我加到頻道裡我才能繼續")
+@bot.command()
+async def clear(ctx):
+    voice_client = ctx.message.guild.voice_client
+    if not str(voice_client) == "None":
+        if not voice_client.is_playing() :
+            try:
+                shutil.rmtree(cwd + "/music")
+                os.mkdir(cwd + "/music")
+                await ctx.message.add_reaction('✅')
+            except Exception as e:
+                await ctx.send("清理時出問題了\n" + "```" + "錯誤報告:" + str(e) +"```")
+                await ctx.message.add_reaction('❌')
+        else:
+            await ctx.send("你需要等音樂播完才能清理舊檔")
+            await ctx.message.add_reaction('❌')
+    else:
+        await ctx.send("抱歉 使用此指令時需將bot加入一個頻道並和bot為於同一頻道")
 @bot.event
 async def on_command_error(ctx,error):
     await ctx.send("你好像打了個怪怪的指令?\n或觸發了個神奇的漏洞?\n用\\help查看你有沒有手殘打錯吧\n錯誤報告:"+ "```" +str(error)+ "```")
