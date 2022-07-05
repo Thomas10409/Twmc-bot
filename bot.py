@@ -13,10 +13,10 @@ cwd = str(os.getcwd())
 print(os.getcwd())
 old_music = ""
 
-if not os.path.isdir(cwd + /music):
+if not os.path.isdir(cwd + "/music"):
     try:
         print("自動創建音樂資料夾")
-        os.mkdir(cwd + /music)
+        os.mkdir(cwd + "/music")
     except:
         print("這都能出錯?!!!")
 
