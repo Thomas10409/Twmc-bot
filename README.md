@@ -18,23 +18,7 @@ twmc discord bot
 
 ------------------------
 
-#需安裝
-
-discord.py
-
-urllib
-
-threading
-
-ffmpeg
-
-pytube
-
-pydub
-
-os
-
-time
+#需先安裝reguirements.txt內有的庫
 
 ------------------------
 
