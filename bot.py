@@ -13,6 +13,13 @@ cwd = str(os.getcwd())
 print(os.getcwd())
 old_music = ""
 
+if not os.path.isdir(cwd + /music):
+    try:
+        print("自動創建音樂資料夾")
+        os.mkdir(cwd + /music)
+    except:
+        print("這都能出錯?!!!")
+
 def covid_event():
     global out
     url = "	https://od.cdc.gov.tw/eic/covid19/covid19_tw_stats.csv"
