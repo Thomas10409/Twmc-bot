@@ -5,33 +5,13 @@ import urllib.request, csv, os, time
 import threading
 from pytube import YouTube
 import ffmpeg
-from pytube import YouTube
 import os
 from pydub import AudioSegment
+import re
 
+cwd = str(os.getcwd())
 print(os.getcwd())
-
-def dl_audio(ctx, url):
-    sound=AudioSegment.from_file(url[32:43] + ".mp3","mp3")
-    time.sleep(sound.duration_seconds)
-    time.sleep(1)
-    ctx.send("播放完畢")
-    os.remove(url[32:43]+".mp3")
-
-def d_audio(url):
-    target_path = "./Downloads"
-    yt = YouTube(url)
-    video=yt.streams.filter(only_audio=True).first()
-    print(video)
-    out_file =video.download(output_path=target_path)
-    print(out_file)
-    base, ext = os.path.splitext(out_file)
-    new_file = base + '.mp3'
-    print(new_file)
-    os.rename(out_file, new_file)
-    print("target path = " + (new_file))
-    print("mp3 has been successfully downloaded.")
-    return new_file
+old_music = ""
 
 def covid_event():
     global out
@@ -185,15 +165,18 @@ async def rickroll(ctx):
 async def help(ctx):
     embed=discord.Embed(title="指令列表", description="這裡的指令都可以用", color=0x1bff00)
     embed.add_field(name="普通指令", value="᲼", inline=False)
-    embed.add_field(name="\help", value="你現在正在看的東東", inline=True)
-    embed.add_field(name="\covid", value="獲取當天covid確診人數僅限台灣地區", inline=True)
-    embed.add_field(name="\\ㄐㄐ", value="吃ㄐㄐ", inline=True)
-    embed.add_field(name="\rickroll", value="rickroll頻道裡的人", inline=True)
-    embed.add_field(name="\ping", value="獲取機器人延遲", inline=True)
+    embed.add_field(name="\\help", value="你現在正在看的東東", inline=True)
+    embed.add_field(name="\\covid", value="獲取當天covid確診人數僅限台灣地區", inline=True)
+    embed.add_field(name="\\ ㄐㄐ", value="吃ㄐㄐ", inline=True)
+    embed.add_field(name="\\rickroll", value="rickroll頻道裡的人", inline=True)
+    embed.add_field(name="\\ping", value="獲取機器人延遲", inline=True)
     embed.add_field(name="音樂指令(Beta)", value="᲼", inline=False)
-    embed.add_field(name="\join", value="讓機器人加入你得語音頻道", inline=True)
-    embed.add_field(name="\play", value="播放youtube音樂", inline=True)
-    embed.add_field(name="\leave", value="讓機器離開你得語音頻道", inline=True)
+    embed.add_field(name="\\join", value="讓機器人加入你得語音頻道", inline=True)
+    embed.add_field(name="\\play", value="播放youtube音樂", inline=True)
+    embed.add_field(name="\\resume", value="繼續音樂", inline=True)
+    embed.add_field(name="\\pause", value="暫停音樂", inline=True)
+    embed.add_field(name="\\stop", value="停止播放", inline=True)
+    embed.add_field(name="\\leave", value="讓機器離開你得語音頻道", inline=True)
     embed.add_field(name="有問題可以私訊我", value="᲼", inline=False)
     embed.add_field(name="或加入我ㄉㄜDC群", value="https://discord.gg/fDhF8n3vnK", inline=False)
     embed.set_footer(text="作者:Thomas10409#3431")
@@ -226,7 +209,7 @@ async def leave(ctx):
             channel = ctx.author.voice.channel
             voice_client = ctx.author.guild.voice_client
             if voice_client.is_playing():
-            	await voice_client.stop()
+            	await voice_client.pause()
             await ctx.voice_client.disconnect()
             await ctx.message.add_reaction('✅')
         else:
@@ -236,29 +219,85 @@ async def leave(ctx):
 @bot.command()
 async def play(ctx,arg):
     url = arg
+    #網址處理
+    if not "https://" in url:
+        if not "http://" in url:
+            if not "youtube.com/watch?v=" in url:
+                if not "youtu.be/" in url:
+                    if len(url) == 11:
+                        print("yt 是編號"+url)
+                        url = "https://www.youtube.com/watch?v="+url
+                        print("Done!"+url)
+                    else:
+                        print("好像有些怪怪的東西"+url)
+                        url = re.sub("/","",string)
+                        url = "https://www.youtube.com/watch?v="+url
+                        print("Done!"+url)
+                else:
+                    url = "https://"+url
+                    print("Done!"+url)
+            else:
+                url = "https://"+url
+                print("Done!"+url)
+        else:
+            print("都不用https嗎?")
+            url = re.sub("http://","",string)
+            url = "https://"+url  
+            print("Done!"+url)
+    else:
+        print("這是一個很正常的網址")
+    if "youtu.be" in url:
+        url = "https://www.youtube.com/watch?v="+url[17:28]
+        print("已轉換youtu.be網址")
+    else:
+        print("沒有必要轉換她已經是youtube.com")
+        
     yt = YouTube(url)
     _filename = yt.title
     channel = ctx.author.voice.channel
     voice_client = ctx.author.guild.voice_client
+    os.chdir(cwd + "/music")
+    #下載音樂
     if not str(voice_client) == "None":
         if not voice_client.is_playing():
-            try:
-                await ctx.send("請稍等音樂正在下載...\n下載時間和影片長度成正比")
-                yt.streams.filter().get_audio_only().download(filename=url[32:43]+".mp3")
-            except:
-                await ctx.send("<Download Error>好像發生了點事情\n音樂下載失敗了...")
-            if os.path.isfile(str(os.getcwd) + "/" + url[32:43]+".mp3"):
-                await ctx.send("<Fill Not Found>好像發生了點事情\n音樂下載失敗了...")
+            if not os.path.isfile(cwd + "/music/" + url[32:43] +".mp3"):
+                try:
+                    print("url")
+                    await ctx.send("請稍等音樂正在下載...\n下載時間和影片長度成正比")
+                    os.chdir(cwd + "/music")
+                    yt.streams.filter().get_audio_only().download(filename=url[32:43]+".mp3")
+                except:
+                    await ctx.send("<Download Error>好像發生了點事情\n音樂下載失敗了...")
+                if os.path.isfile(str(os.getcwd) + "/" + url[32:43]+".mp3"):
+                    await ctx.send("<Fill Not Found>好像發生了點事情\n音樂下載失敗了...")
+                else:
+                    channel = ctx.author.voice.channel
+                    try:
+                        await channel.connect()
+                    except:
+                        print("already connect channel.")
+
+                    await ctx.message.add_reaction('✅')
+                    voice_client = ctx.author.guild.voice_client
+                    try:
+                        await ctx.send("現在播放:" + yt.title)
+                        voice_client.play(discord.FFmpegPCMAudio(url[32:43] + ".mp3"))
+                    except:
+                        await ctx.send("<PlayError>播放時出了點問題")
             else:
                 channel = ctx.author.voice.channel
                 try:
                     await channel.connect()
                 except:
-                    print("emm")
+                    print("already connect channel.")
+
                 await ctx.message.add_reaction('✅')
                 voice_client = ctx.author.guild.voice_client
-                await ctx.send("現在播放:" + yt.title)
-                voice_client.play(discord.FFmpegPCMAudio(url[32:43] + ".mp3"))
+                try:
+                    await ctx.send("現在播放:" + yt.title)
+                    voice_client.play(discord.FFmpegPCMAudio(url[32:43] + ".mp3"))
+                except:
+                    await ctx.send("<PlayError>播放時出了點問題")
         else:
             await ctx.send("現在正在播歌\n如果要放其他的\n須等這個歌播完或是直接用stop指令停止")
     else:
@@ -267,11 +306,43 @@ async def play(ctx,arg):
 @bot.command()
 async def stop(ctx):
     voice_client = ctx.message.guild.voice_client
-    if voice_client.is_playing() :
-        await voice_client.stop()
-        await ctx.message.add_reaction('✅')
+    if not str(voice_client) == "None":
+        if voice_client.is_playing() :
+            voice_client.stop()
+            await ctx.message.add_reaction('✅')
+        else:
+            await ctx.send("我什麼都還沒播啊")
+            await ctx.message.add_reaction('❌')
     else:
-        await ctx.send("我什麼都還沒播啊")
-        await ctx.message.add_reaction('❌')
+        await ctx.send("你要先把我加到頻道裡我才能停止")
+        
+@bot.command()
+async def pause(ctx):
+    voice_client = ctx.message.guild.voice_client
+    if not str(voice_client) == "None":
+        if voice_client.is_playing() :
+            voice_client.pause()
+            await ctx.message.add_reaction('✅')
+        else:
+            await ctx.send("我什麼都還沒播啊")
+            await ctx.message.add_reaction('❌')
+    else:
+        await ctx.send("你要先把我加到頻道裡我才能暫停")
+        
+@bot.command()
+async def resume(ctx):
+    voice_client = ctx.message.guild.voice_client
+    if not str(voice_client) == "None":
+        if not voice_client.is_playing():
+            voice_client.resume()
+            await ctx.message.add_reaction('✅')
+        else:
+            await ctx.send("我已經正在播了")
+            await ctx.message.add_reaction('❌')
+    else:
+        await ctx.send("你要先把我加到頻道裡我才能繼續")
+@bot.event
+async def on_command_error(ctx,error):
+    await ctx.send("你好像打了個怪怪的指令?\n或觸發了個神奇的漏洞?\n用\\help查看你有沒有手殘打錯吧\n錯誤報告:"+ "```" +str(error)+ "```")
 
 bot.run(data['token'])
