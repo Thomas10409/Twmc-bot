@@ -18,7 +18,7 @@ twmc discord bot
 
 ------------------------
 
-#需先安裝reguirements.txt內有的庫
+#需先安裝reguirements.txt內所有的庫
 
 ------------------------
 
