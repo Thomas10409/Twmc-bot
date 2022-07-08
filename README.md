@@ -24,9 +24,14 @@ twmc discord bot
 
 #音樂功能 music commands
 
-\play        
+\play  +  url    
 
              在一個語音頻道播放音樂(只能放youtube)
+             example:
+             
+             https://www.youtube.com/watch?v=dQw4w9WgXcQ
+             www.youtube.com/watch?v=dQw4w9WgXcQ
+             dQw4w9WgXcQ
              
 \resume
 
@@ -48,6 +53,10 @@ twmc discord bot
 \leave       
 
              離開你所在的語音頻道
+             
+\clear
+              
+             手動清理多餘音檔
              
 ------------------------
              
@@ -74,9 +83,3 @@ twmc discord bot
              pong!獲得機器人延遲
              
 ------------------------
-             
-請遵守創用cc
-
-BY-NC
-
-姓名標示─非商業性
